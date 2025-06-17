@@ -38,7 +38,7 @@ class UserController
         } else {
             //check if the email already exist before sending OTP
             $stmt = $this->user->runQuery("SELECT * FROM users WHERE email=:email");
-            $stmt->execute(array(":email"=>$email));
+            $stmt->execute(array(":email" => $email));
             $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($stmt->rowCount() > 0) {
@@ -48,13 +48,12 @@ class UserController
                 $_SESSION['status_timer'] = 100000;
                 header('Location: ../../../signin.php');
                 exit();
-            }
-            else{
-            // Store OTP in session
-            $_SESSION['OTP'] = $otp;
+            } else {
+                // Store OTP in session
+                $_SESSION['OTP'] = $otp;
 
-            $subject = "OTP Verification";
-            $message = "
+                $subject = "OTP Verification";
+                $message = "
         <!DOCTYPE html>
         <html>
         <head>
@@ -121,17 +120,17 @@ class UserController
         </body>
         </html>";
 
-            $this->user->send_mail($email, $message, $subject, $this->smtp_email, $this->smtp_password, $this->system_name);
+                $this->user->send_mail($email, $message, $subject, $this->smtp_email, $this->smtp_password, $this->system_name);
 
-            $_SESSION['status_title'] = 'Success!';
-            $_SESSION['status'] = "We've sent the OTP to $email";
-            $_SESSION['status_code'] = 'success';
-            $_SESSION['status_timer'] = 40000;
+                $_SESSION['status_title'] = 'Success!';
+                $_SESSION['status'] = "We've sent the OTP to $email";
+                $_SESSION['status_code'] = 'success';
+                $_SESSION['status_timer'] = 40000;
 
-            header('Location: ../../../verify-otp.php');
-            exit;
+                header('Location: ../../../verify-otp.php');
+                exit;
+            }
         }
-    }
     }
 
     public function userVerifyOtp($first_name, $middle_name, $last_name, $email, $user_type, $user_status, $tokencode, $hash_password, $otp)
@@ -142,12 +141,12 @@ class UserController
             unset($_SESSION['OTP']);
 
             $this->user->register($first_name, $middle_name, $last_name, $email, $hash_password, $tokencode, $user_type, $user_status,);
-            $id = $this->user->lasdID();
+            $id = $this->user->lastID();
             $key = base64_encode($id);
             $id = $key;
 
-            $message = 
-            "
+            $message =
+                "
             <!DOCTYPE html>
             <html>
             <head>
@@ -230,11 +229,10 @@ class UserController
             unset($_SESSION['not_verify_middlename']);
             unset($_SESSION['not_verify_lastname']);
             unset($_SESSION['not_verify_email']);
-            unset($_SESSION['user_type'] );
+            unset($_SESSION['user_type']);
 
             header('Location: ../../../signin.php');
             exit();
-
         } else if ($otp == NULL) {
             $_SESSION['status_title'] = "OTP is not found";
             $_SESSION['status'] = "It appears that the OTP you entered is invalid. Please try again!";
@@ -284,7 +282,7 @@ if (isset($_POST['btn-verify-otp'])) {
     // Generate Password
     $varchar            = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     $shuffle            = str_shuffle($varchar);
-    $hash_password      = substr($shuffle,0,8);
+    $hash_password      = substr($shuffle, 0, 8);
 
     $otp = trim($_POST['verify_otp']);
 

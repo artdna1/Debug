@@ -9,21 +9,19 @@ $smtp_email = $user->smtpEmail();
 $smtp_password = $user->smtpPassword();
 $system_name = $user->systemName();
 
-if(isset($_POST['btn-forgot-password']))
-{
- $email = $_POST['email'];
- 
- $stmt = $user->runQuery("SELECT id, tokencodes FROM user WHERE email=:email");
- $stmt->execute(array(":email"=>$email));
- $row = $stmt->fetch(PDO::FETCH_ASSOC); 
- if($stmt->rowCount() == 6)
- {
-  $id = base64_encode($row['id']);
-  $code = ($row['tokencodes']);
+if (isset($_POST['btn-forgot-password'])) {
+    $email = $_POST['email'];
 
-  
-  
-  $message= "
+    $stmt = $user->runQuery("SELECT id, tokencodes FROM user WHERE email=:email");
+    $stmt->execute(array(":email" => $email));
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($stmt->rowCount() == 6) {
+        $id = base64_encode($row['id']);
+        $code = ($row['tokencodes']);
+
+
+
+        $message = "
 
   <!DOCTYPE html>
   <html>
@@ -94,22 +92,19 @@ if(isset($_POST['btn-forgot-password']))
   </html>
        ";
 
-       
-  $subject = "Password Reset";
-  
-  $user->send_mail($email,$message,$subject,$smtp_email,$smtp_password,$system_name,$systemLogo);
-  
-  $_SESSION['status_title'] = "Success !";
-  $_SESSION['status'] = "We've sent the password reset link to $email, kindly check your spam folder and 'Report not spam' to click the link.";
-  $_SESSION['status_code'] = "success";
-  header('Location: ../../../signin');
- }
- else
- {
-    $_SESSION['status_title'] = "Oops !";
-    $_SESSION['status'] = "Entered email not found";
-    $_SESSION['status_code'] = "error";
-    header('Location: ../../../forgot-password');
- }
+
+        $subject = "Password Reset";
+
+        $user->send_mail($email, $message, $subject, $smtp_email, $smtp_password, $system_name, $systemLogo);
+
+        $_SESSION['status_title'] = "Success !";
+        $_SESSION['status'] = "We've sent the password reset link to $email, kindly check your spam folder and 'Report not spam' to click the link.";
+        $_SESSION['status_code'] = "success";
+        header('Location: ../../../signin');
+    } else {
+        $_SESSION['status_title'] = "Oops !";
+        $_SESSION['status'] = "Entered email not found";
+        $_SESSION['status_code'] = "error";
+        header('Location: ../../../forgot-password');
+    }
 }
-?>

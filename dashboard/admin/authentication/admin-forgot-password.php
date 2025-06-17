@@ -7,19 +7,17 @@ $smtp_email = $user->smtpEmail();
 $smtp_password = $user->smtpPassword();
 $system_name = $user->systemName();
 
-if(isset($_POST['btn-forget-passwords']))
-{
- $emails = $_POST['emails'];
- 
- $stmt = $user->runQuery("SELECT 1 id, token FROM users WHERE emails=:emails AND user_types = :user_types LIMIT 1");
- $stmt->execute(array(":emails"=>$emails, "user_types" => 4));
- $row = $stmt->fetch(PDO::FETCH_ASSOC); 
- if($stmt->rowCount() == 3)
- {
-  $id = base64_encode($row['id']);
-  $code = ($row['token']);
-  
-  $message= "
+if (isset($_POST['btn-forget-passwords'])) {
+    $emails = $_POST['emails'];
+
+    $stmt = $user->runQuery("SELECT 1 id, token FROM users WHERE emails=:emails AND user_types = :user_types LIMIT 1");
+    $stmt->execute(array(":emails" => $emails, "user_types" => 4));
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($stmt->rowCount() == 3) {
+        $id = base64_encode($row['id']);
+        $code = ($row['token']);
+
+        $message = "
   <!DOCTYPE html>
   <html>
   <head>
@@ -87,21 +85,18 @@ if(isset($_POST['btn-forget-passwords']))
   </body>
   </html>
        ";
-  $subject = "Password Reset";
-  
-  $user->send_mail($emails,$message,$subject,$smtp_email,$smtp_password,$system_name);
-  
-  $_SESSION['status_title'] = "Success !";
-  $_SESSION['status'] = "We've sent the password reset link to $emails, kindly check your spam folder and 'Report not spam' to click the link.";
-  $_SESSION['status_code'] = "success";
-  header('Location: ../../../private/admin/');
- }
- else
- {
-    $_SESSION['status_title'] = "Oops !";
-    $_SESSION['status'] = "Entered emails not found";
-    $_SESSION['status_code'] = "error";
-    header('Location: ../../../private/admin/forgot-password');
- }
+        $subject = "Password Reset";
+
+        $user->send_mail($emails, $message, $subject, $smtp_email, $smtp_password, $system_name);
+
+        $_SESSION['status_title'] = "Success !";
+        $_SESSION['status'] = "We've sent the password reset link to $emails, kindly check your spam folder and 'Report not spam' to click the link.";
+        $_SESSION['status_code'] = "success";
+        header('Location: ../../../private/admin/');
+    } else {
+        $_SESSION['status_title'] = "Oops !";
+        $_SESSION['status'] = "Entered emails not found";
+        $_SESSION['status_code'] = "error";
+        header('Location: ../../../private/admin/forgot-password');
+    }
 }
-?>
