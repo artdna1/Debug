@@ -1,13 +1,11 @@
 <?php
 require_once __DIR__ . '/../../../database/dbconfig.php';
+include_once __DIR__ . '/../../../configuration/settings-configuration.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
-
-include_once __DIR__ . '/../../../configuration/settings-configuration.php';
-require_once __DIR__ . '/../../vendor/autoload.php';
-
 
 class USER
 {
@@ -76,13 +74,13 @@ class USER
     return $systemLogo;
   }
 
-  public function lastID()
+  public function lasdID()
   {
     $stmt = $this->conn->lastInsertId();
     return $stmt;
   }
 
-  public function register($first_name, $middle_name, $last_name, $email, $hash_password, $tokencode, $user_type, $user_status)
+  public function register($first_name, $middle_name, $last_name, $email, $hash_password, $tokencode, $user_type, $user_status,)
   {
     try {
       $password = md5($hash_password);
@@ -108,8 +106,8 @@ class USER
   public function login($email, $hash_password)
   {
     try {
-      $stmt = $this->conn->prepare("SELECT * FROM users WHERE email=:email_id AND account_status = :account_status AND user_type = :user_type");
-      $stmt->execute(array(":email_id" => $email, ":account_status" => "active", ":user_type" => 9));
+      $stmt = $this->conn->prepare("SELECT * FROM users WHERE email=:email_id AND account_status = :account_status AND user_type = :user_type"); // add s to user
+      $stmt->execute(array(":email_id" => $email, ":account_status" => "active", ":user_type" => 3)); // changed "user_type" => 9 to ":user_type" => 3 for users
       $userRow = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
